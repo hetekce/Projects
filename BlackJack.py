@@ -1,4 +1,5 @@
 import random
+
 print("Welcome to the BlackJack")
 
 """Rules of the game
@@ -64,7 +65,6 @@ Class Game
 
 """
 
-
 """Card class that represents a playing card and its image file name."""
 
 
@@ -73,6 +73,10 @@ class Card:
     FACES = ['Ace', '2', '3', '4', '5', '6',
              '7', '8', '9', '10', 'Jack', 'Queen', 'King']
     SUITS = ['Hearts', 'Diamonds', 'Clubs', 'Spades']
+
+    Ace = [1, 11]
+
+    Values = {'Ace': [1, 11], 'Jack': 10, 'Queen': 10, 'King': 10}
 
     def __init__(self, face, suit):
         """Initialize a Card with a face and suit."""
@@ -88,13 +92,6 @@ class Card:
     def suit(self):
         """Return the Card's self._suit value."""
         return self._suit
-
-    @property
-    def image_name(self):
-        """Return the Card's image file name."""
-        # str type casting replace method unu kullanmak için
-        # normalde self object'in kendisidir
-        return str(self).replace(' ', '_') + '.png'
 
     def __repr__(self):
         # _repr object direk çağrıldığında çağrıldığında çağrılır.
@@ -118,21 +115,22 @@ class Card:
 
 
 class DeckOfCards:
-    NUMBER_OF_CARDS = 52  # constant number of Cards
 
     def __init__(self):
         """Initialize the deck."""
         self._current_card = 0
         self._deck = []
 
-        for count in range(DeckOfCards.NUMBER_OF_CARDS):
-            self._deck.append(Card(Card.FACES[count % 13],
-                                   Card.SUITS[count // 13]))
-
-    """def shuffle(self):
-        #Shuffle deck
-        self._current_card = 0
-        random.shuffle(self._deck)"""
+    def card_distribute(self):
+        while True:
+            random_face = random.choice(Card.FACES)
+            random_suit = random.choice(Card.SUITS)
+            if [random_face, random_suit] not in self._deck:
+                self._deck = self._deck.append([random_face, random_suit])
+                break
+            else:
+                continue
+        return self._deck[-1]
 
     def deal_card(self):
         """Return one Card."""
@@ -153,3 +151,103 @@ class DeckOfCards:
                 s += '\n'
 
         return s
+
+
+class Game:
+    def __init__(self):
+        """initialize a game class to play the game according to the rules"""
+        self._point_of_dealer = 0
+        self._point_of_player = 0
+        self._cards_of_player = []
+        self._cards_of_dealer = []
+        self._points = []
+        self._total_wins_player = 0
+        self._total_wins_dealer = 0
+        self._total_ties = 0
+
+    def sum_of_cards_values(self):
+        for name, suit in self._cards_of_player:
+            if type(name) != int:
+                if name != 'Ace':
+                    name = Card.Values[name]
+                elif name == 'Ace':
+                    if self._point_of_player <= 10:
+                        name = Card.Values[name[1]]
+                    else:
+                        name = Card.Values[name[0]]
+                self._point_of_player += name
+            else:
+                self._point_of_player += name
+
+        for name, suit in self._cards_of_dealer:
+            if type(name) != int:
+                if name != 'Ace':
+                    name = Card.Values[name]
+                elif name == 'Ace':
+                    if self._point_of_dealer <= 10:
+                        name = Card.Values[name[1]]
+                    else:
+                        name = Card.Values[name[0]]
+                self._point_of_dealer += name
+            else:
+                self._point_of_dealer += name
+
+        self._points = [self._point_of_player, self._point_of_dealer]
+        return self._points
+
+    def black_jack_control(self):
+        i = 0
+        while i < 1:
+            self._cards_of_player = self._cards_of_player.append(DeckOfCards.card_distribute())
+            self._cards_of_dealer = self._cards_of_dealer.append(DeckOfCards.card_distribute())
+            i += 1
+
+        if Game.sum_of_cards_values()[0] == 21:
+            return True
+        else:
+            return False
+
+    def __repr__(self):
+        """Return string representation for repr()."""
+        return f"Points(Player='{self._point_of_player}', Dealer='{self._point_of_dealer}')"
+
+    def __str__(self):
+        """Return string representation for str()."""
+        return f'{self._point_of_player} of {self._point_of_dealer}'
+
+    def finish_game(self):
+        print("Thank you for playing with us")
+        print(f'number of wins of player: %s' % self._total_wins_player,
+              f'\nnumber of wins of dealer: %s' % self._total_wins_dealer,
+              f'\nnumber of ties are: %s' % self._total_ties)
+        if self._total_wins_player > self._total_wins_dealer:
+            print("Player defeated the dealer")
+        else:
+            print("Dealer defeated the player")
+
+    def finish_set(self):
+        if Game.black_jack_control():
+            if Game.sum_of_cards_values()[1] < 21:
+                print("*************************************")
+                print("CONGRATS YOU WON WITH BLACKJACK!!!!!!")
+                print("*************************************")
+                self._total_wins_player += 1
+            else:
+                print("NO WINNER! TIE")
+                self._total_ties += 1
+        elif self._point_of_player > 21:
+            print("Dealer WINS")
+            self._total_wins_dealer += 1
+        elif self._point_of_dealer > 21:
+            print("Player WINS")
+            self._total_wins_player += 1
+        elif self._point_of_dealer > 16:
+            if self._point_of_player < self._point_of_dealer:
+                print("Dealer WINS")
+                self._total_wins_dealer += 1
+            elif self._point_of_player > self._point_of_dealer:
+                print("Player WINS")
+                self._total_wins_player += 1
+            else:
+                print("NO WINNER! TIE")
+                self._total_ties += 1
