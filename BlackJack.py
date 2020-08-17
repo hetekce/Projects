@@ -14,22 +14,51 @@ print("Welcome to the BlackJack")
 10- Krupiyer 21`i geçerse (bust) 21`i geçmeyen bütün oyuncular kazanmış olur.
 11- Oyuncu ve krupiyer aynı skoru elde ederse (Push) oyunda herhangi bir kazanan olmaz.
 
+class Card
 
-1 - Player ve Dealer'a ikişer kart ver.
-2 - Player'ın iki kartınıda ve yanıda toplamını göster.
-3 - Dealer'ın bir kartını göster diğerini ******* gizle. tek kartın değeerini yaz.
-4 - ilk elde verilen kartları ve çekilen kartları kart havuzundan çıkar.
+    def  -- Kartları Tanımla
+            Face ve Suit objelerini dön....
+            "As" = [1, 11]
+            Repr ve Str fonksiyonlarını olurştur.. f stringle
 
-5 - İlk aşamada BlackJack durumunu kontrol et, varsa bitir.
-    BlackJack durumu ikisinde de varsa, beraberlik.
-6 - Döngü: Oyuncu stand demezse, kart ver.
-           Oyuncu 21'e ulaşırsa döngüden çık makineye kart ver.
-           Oyuncu 21 i geçerse oyunu bitir.
-7 - Stand Derse : Makinenin görünmeyen kartını aç...
-    Makine 17ye eşit yada geçene kadar kart ver.
-8 - Makine 17'ye ulaştığında yada 21'i geçtiğinde oyunu bitir.
-9 - Toplam değerleri kıyasla büyük olanı galip ata.
-10 - Oyunu bitirmek isterse bitir... ve kazanma toplamlarını bas.
+class CardDecking (Adem)
+
+    Number of Cards = 52
+
+    def -- kart ver
+            1 - Random olarak gerekli oyuncuya kart ver.
+    def -- player kart göster
+            2 - Player'ın iki kartınıda ve yanıda toplamını göster. (Sum of CardValues)
+    def -- dealer kart göster ve sakla
+            3 - Dealer'ın bir kartını göster diğerini ******* gizle. tek kartın değeerini yaz.
+    def -- kart çıkar
+            4 - ilk elde verilen kartları ve çekilen kartları kart havuzundan çıkar.
+    def -- Status
+            5 - İlk aşamada BlackJack durumunu kontrol et, varsa bitir.
+                BlackJack durumu ikisinde de varsa, beraberlik.
+
+Class Game
+    def -- BlackJack_Kontrol (Emre)
+           Player ve Dealer' a ikişer kart ver... (CardDecking.kart ver)
+           BlackJack kontrol et. CardValues den çek.. if statemen koy.
+
+    def -- Sum of CardValues(player, dealer) (Emre)
+
+    def -- status Taner
+        6 - Döngü: Oyuncu stand demezse, kart ver. (CardDecking(kart_ver))
+                   Oyuncu 21'e ulaşırsa döngüden çık makineye kart ver.
+                   Oyuncu 21 i geçerse oyunu bitir.
+    def -- stand   Taner
+        7 - Stand Derse : Makinenin görünmeyen kartını aç. return True False
+    def -- DealerTurn Alperen
+        Makine 17ye eşit yada geçene kadar kart ver.
+    def -- Finish_Set: Alperen
+        8 - BlackJack_Kontrol True ise bitir.
+        8 - Makine 17'ye ulaştığında yada 21'i geçtiğinde oyunu bitir.
+        9 - Toplam değerleri kıyasla büyük olanı galip ata.
+
+    def -- Finish_Game Emre
+        10 - Oyunu bitirmek isterse bitir... ve kazanma toplamlarını bas.
 
 
 
@@ -100,10 +129,10 @@ class DeckOfCards:
             self._deck.append(Card(Card.FACES[count % 13],
                                    Card.SUITS[count // 13]))
 
-    def shuffle(self):
-        """Shuffle deck."""
+    """def shuffle(self):
+        #Shuffle deck
         self._current_card = 0
-        random.shuffle(self._deck)
+        random.shuffle(self._deck)"""
 
     def deal_card(self):
         """Return one Card."""
