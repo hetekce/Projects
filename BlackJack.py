@@ -67,6 +67,77 @@ Class Game
 
 """Card class that represents a playing card and its image file name."""
 
+import secrets
+
+FACES = ['Ace', '2', '3', '4', '5', '6','7', '8', '9', '10', 'Jack', 'Queen', 'King']
+SUITS = ['Hearts', 'Diamonds', 'Clubs', 'Spades']
+
+
+Ace = [1, 11]
+
+Values = {'Ace': [1, 11], 'Jack': 10, 'Queen': 10, 'King': 10}
+
+class CardDecking():
+
+    def __init__(self):
+        
+    def card_giving(self): #gives cards
+        players_faces=[]
+        dealers_faces=[]
+        players_suits=[]
+        dealers_suits=[]
+        
+        total_player=o
+        total_dealer=o
+        for i in range(2):
+            player_card_faces=secrets.choice(FACES) #random value from the list FACES
+            player_card_suits=secrets.choice(SUITS)
+
+            dealer_card_faces=secrets.choice(FACES)
+            dealer_card_suits=secrets.choice(SUITS)
+            
+            if player_card_faces>=2 and player_card_faces<=10:
+                total_player+=player_card_faces
+            else:
+                total_player+=Values.get(player_card_faces)
+                
+            if dealer_card_faces>=2 and dealer_card_faces<=10:
+                total_dealer+=dealer_card_faces
+            else:
+                total_dealer+=Values.get(dealer_card_faces)
+                
+            
+            players_faces.append(player_card_faces)
+            players_suits.append(player_card_suits)
+            dealers_faces.append(dealer_card_faces)
+            dealers_suits.append(dealer_card_suits)
+            
+        print(f'players cards are {players_faces}, total value of  dealers card is {dealers_faces[0]}')
+        a=[total_player, total_dealer,player_faces, dealer_faces]
+        return a
+
+    def show_players_cards(self):
+        
+        sum_of_card_values=card_giving()
+        sum_of_player_values=sum_of_card_values[0]
+        player_cards=sum_of_card_values[2]
+        print(f'the total value of player is {sum_of_player_values}, the values are {player_cards}')
+
+    def dealer_cards(self):
+        sum_of_card_values=card_giving()
+        one_of_dealer_value=sum_of_card_values[1]
+        print(f'one value of dealer is {one_of_dealer_value}')
+    
+    def decreased_cards(self):
+    
+    def BlackJackControl(self):
+        control=card_giving()
+        if control[0]==21 and control[1]==21:
+            print('the total amount of numbers are equal')
+            break
+        else:git
+            continue
+
 
 class Card:
     # constant variable'lar her zaman büyük yazılır.
