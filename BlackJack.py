@@ -24,17 +24,17 @@ class Card
 
 class CardDecking (Adem)
 
-    Number of Cards = 52
+    
 
-    def -- kart ver
+    def -- kart ver ()
             1 - Random olarak gerekli oyuncuya kart ver.
     def -- player kart göster
             2 - Player'ın iki kartınıda ve yanıda toplamını göster. (Sum of CardValues)
     def -- dealer kart göster ve sakla
             3 - Dealer'ın bir kartını göster diğerini ******* gizle. tek kartın değeerini yaz.
-    def -- kart çıkar
+    def -- kart çıkar ()
             4 - ilk elde verilen kartları ve çekilen kartları kart havuzundan çıkar.
-    def -- Status
+    def -- Status (Böyle bir fonksiyona gerek yok çünkü bunu game class'ı içerisinde blackjack kontrol kısmında tekrardan yapmış bulıunuyoruz.)
             5 - İlk aşamada BlackJack durumunu kontrol et, varsa bitir.
                 BlackJack durumu ikisinde de varsa, beraberlik.
 
@@ -197,7 +197,7 @@ class Game:
 
     def black_jack_control(self):
         i = 0
-        while i < 1:
+        while i < 2:
             self._cards_of_player = self._cards_of_player.append(DeckOfCards.card_distribute())
             self._cards_of_dealer = self._cards_of_dealer.append(DeckOfCards.card_distribute())
             i += 1
@@ -235,37 +235,59 @@ class Game:
 
     def finish_game(self):
         print("Thank you for playing with us")
-        print(f'number of wins of player: %s' % self._total_wins_player,
-              f'\nnumber of wins of dealer: %s' % self._total_wins_dealer,
-              f'\nnumber of ties are: %s' % self._total_ties)
+        print(f' number of wins of player: %s' % self._total_wins_player,
+              f'\n number of wins of dealer: %s' % self._total_wins_dealer,
+              f'\n number of ties are: %s' % self._total_ties)
         if self._total_wins_player > self._total_wins_dealer:
             print("Player defeated the dealer")
         else:
             print("Dealer defeated the player")
 
+    def print_results(self):
+        print(f'Point of Player is: %s ' % self._point_of_player)
+        print(f'Point of Dealer is: %s' % self._point_of_dealer)
+
     def finish_set(self):
+        Game.print_results()
         if Game.black_jack_control():
             if Game.sum_of_cards_values()[1] < 21:
                 print("*************************************")
-                print("CONGRATS YOU WON WITH BLACKJACK!!!!!!")
+                print("Congratulations! You got a Blackjack!\n")
                 print("*************************************")
                 self._total_wins_player += 1
+            else:
+                print("NO WINNER! TIE")
+                self._total_ties += 1
+        elif self._point_of_player == 21:
+            if self._point_of_player > self._point_of_dealer:
+                print("Congratulations. Your score is higher than the dealer. You win\n")
+                self._total_wins_player += 1
+            else:
+                print("NO WINNER! TIE")
+                self._total_ties += 1
+        elif self._point_of_dealer == 21:
+            if self._point_of_player < self._point_of_dealer:
+                print("Sorry. Your score isn't higher than the dealer. You lose.\n")
+                self._total_wins_dealer += 1
             else:
                 print("NO WINNER! TIE")
                 self._total_ties += 1
         elif self._point_of_player > 21:
-            print("Dealer WINS")
+            print("Sorry. You busted. You lose.\n")
             self._total_wins_dealer += 1
         elif self._point_of_dealer > 21:
-            print("Player WINS")
+            print("Dealer busts. You win!\n")
             self._total_wins_player += 1
         elif self._point_of_dealer > 16:
             if self._point_of_player < self._point_of_dealer:
-                print("Dealer WINS")
+                print("Sorry. Your score isn't higher than the dealer. You lose.\n")
                 self._total_wins_dealer += 1
             elif self._point_of_player > self._point_of_dealer:
-                print("Player WINS")
+                print("Congratulations. Your score is higher than the dealer. You win\n")
                 self._total_wins_player += 1
             else:
                 print("NO WINNER! TIE")
                 self._total_ties += 1
+
+
+
