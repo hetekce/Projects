@@ -59,13 +59,7 @@ Class Game
     def -- Finish_Game Emre
         10 - Oyunu bitirmek isterse bitir... ve kazanma toplamlarını bas.
 
-
-
 """
-
-"""Card class that represents a playing card and its image file name."""
-
-
 """
     def card_giving(self): #gives cards
         players_faces=[]
@@ -101,12 +95,7 @@ Class Game
         print(f'players cards are {players_faces}, total value of  dealers card is {dealers_faces[0]}')
         a=[total_player, total_dealer,player_faces, dealer_faces]
         return a
-        
-"""
 
-
-
-"""   
     def BlackJackControl(self):
         control=CardDecking.card_giving()
         if control[0]==21:
@@ -117,48 +106,28 @@ Class Game
 
 
 class Card:
-    # constant variables her zaman büyük yazılır.
-    FACES = ['Ace', 2, 3, 4, 5, 6,
-             7, 8, 9, 10, 'Jack', 'Queen', 'King']
+    # constants are written always with CAPITAL LETTERS
+    FACES = ['Ace', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'Jack', 'Queen', 'King']
     SUITS = ['Hearts', 'Diamonds', 'Clubs', 'Spades']
-    Ace = [1, 11]
-    Values = {'Ace': Ace, 'Jack': 10, 'Queen': 10, 'King': 10}
+    # Ace = [1, 11] # Has been reconsidered
+    Values = {'Ace': 11, 'Jack': 10, 'Queen': 10, 'King': 10}
 
     def __init__(self):
         """Initialize a Card with a face and suit."""
-
-    def __repr__(self):
-        # _repr object direk çağrıldığında çağrıldığında çağrılır.
-        # bu her class siçerisinde muhakkak bulunur.
-        # _str olmadığında bu otomatik olarak çağrılır.
-        """Return string representation for repr()."""
-        return f"Card(face='{self.face}', suit='{self.suit}')"
-
-    def __str__(self):
-        # _str object print içerisinde çağrıldığında çağrılır.
-        """Return string representation for str()."""
-        return f'{self.face} of {self.suit}'
-
-    def __format__(self, format):
-        """Return formatted string representation."""
-        # Format fstring olarak çağrılınca format belirlemek için
-        return f'{str(self):{format}}'
-
-
-"""Deck class represents a deck of Cards."""
+        pass
 
 
 class DeckOfCards:
-
+    """DeckOfCards class represents a deck of Cards."""
     def __init__(self):
         """Initialize the deck."""
         self._deck = []
 
-    def card_distribute(self):
+    def card_distribute(self, ard):
         while True:
-            random_face = random.choice(Card.FACES)
-            random_suit = random.choice(Card.SUITS)
-            kart = (random_face, random_suit)
+            random_face = random.choice(ard.FACES)
+            random_suit = random.choice(ard.SUITS)
+            kart = [random_face, random_suit]
             if kart not in self._deck:
                 self._deck.append(kart)
                 break
@@ -180,74 +149,80 @@ class Game:
         self._total_wins_dealer = 0
         self._total_ties = 0
         self._hand = False
+        self._black = False
+        self._close = False
 
     def show_players_cards(self):
 
-        # sum_of_player_values = CardDecking.card_giving()[0]
-        # player_cards = CardDecking.card_giving()[2]
-        # Here is just the face, but the suit also can be added
         print(f'the total value of player is {self._point_of_player}, '
               f'the cards of player are {self._cards_of_player}')
 
-    def dealer_cards(self):
-        # sum_of_card_values = DeckOfCards.card_distribute()[1]
-        # one_of_dealer_value = sum_of_card_values[3]
+    def show_dealer_cards(self):
+
         if not self._hand:
-            print(f'the card of dealer is {self._cards_of_dealer[1]}')
+            print(f'the first card of dealer is {self._cards_of_dealer[0]}')
         else:
             print(f'total value of dealer is {self._point_of_dealer},'
-                  f'the cards of dealer is {self._cards_of_dealer}')
+                  f'the cards of dealer are {self._cards_of_dealer}')
 
     def sum_of_cards_values(self, ard):
+        self._point_of_player = 0
+        self._point_of_dealer = 0
         for name, suit in self._cards_of_player:
             if type(name) != int:
-                if name != 'Ace':
-                    name = ard.Values[name]
-                elif name == 'Ace':
-                    if self._point_of_player <= 10:
-                        name = ard.Values[name[1]]
-                    else:
-                        name = ard.Values[name[0]]
+                name = ard.Values[name]
                 self._point_of_player += name
             else:
                 self._point_of_player += name
-
+            # We are evaluating the value and then set Ace as 1
+            if name == "Ace" and self._point_of_player > 21:
+                self._point_of_player -= 10
         for name, suit in self._cards_of_dealer:
             if type(name) != int:
-                if name != 'Ace':
-                    name = ard.Values[name]
-                elif name == 'Ace':
-                    if self._point_of_dealer <= 10:
-                        name = ard.Values[name[1]]
-                    else:
-                        name = ard.Values[name[0]]
+                name = ard.Values[name]
                 self._point_of_dealer += name
             else:
                 self._point_of_dealer += name
-
+            if name == "Ace" and self._point_of_player > 21:
+                self._point_of_player -= 10
         self._points = [self._point_of_player, self._point_of_dealer]
+        # return self._points
+
+    def card_values_total(self):
         return self._points
 
-    def black_jack_control(self, decks):
+    def card_names(self):
+        return [self._cards_of_player, self._cards_of_dealer]
 
+    def first_distribution(self, decks, ard):
         for i in range(2):
-            self._cards_of_player.append(decks.card_distribute())
-            self._cards_of_dealer.append(decks.card_distribute())
-        if self.sum_of_cards_values(cards1)[0] == 21:
+            self._cards_of_player.append(decks.card_distribute(ard))
+            self._cards_of_dealer.append(decks.card_distribute(ard))
+            self.sum_of_cards_values(ard)
+
+    def black_jack_control(self):
+
+        if self.card_values_total()[0] == 21:
             return True
         else:
+            self._black = True
             return False
 
 # ######################## Taner
-    def status(self, decks):
+    def status(self, decks, ard):
         # if player not choose STAND, take one more Card..
-        if not self.stand():
-            self._cards_of_player.append(decks.card_distribute())
+        if not self.stand() and not self._hand:
+            self._cards_of_player.append(decks.card_distribute(ard))
+            self.sum_of_cards_values(ard)
+            self.show_players_cards()
+            self.show_dealer_cards()
         # if player is STAND, take one more Card to dealer..
         else:
             if self._point_of_dealer < self._point_of_player and self._point_of_dealer < 17:
-                self._cards_of_dealer.append(decks.card_distribute())
-
+                self._cards_of_dealer.append(decks.card_distribute(ard))
+                self.sum_of_cards_values(ard)
+                self.show_players_cards()
+                self.show_dealer_cards()
             else:
                 self.finish_set()
                 return False
@@ -260,9 +235,18 @@ class Game:
         elif self._point_of_player > 21:
             self.finish_set()
             return False
-        else:
-            if not self._hand:
-                self.stand()
+
+        elif self._point_of_dealer > 21:
+            self.finish_set()
+            return False
+
+        elif self._point_of_dealer > self._point_of_player:
+            self.finish_set()
+            return False
+
+        # else:
+        #    if self._hand:
+        #        return False
 # ######################## Taner
 
     def __repr__(self):
@@ -280,7 +264,7 @@ class Game:
             self.black_jack_control()
             self.sum_of_cards_values()
             self.show_players_cards()
-            self.dealer_cards()
+            self.show_dealer_cards()
             self.stand()
             while self.status():
                 self.status()
@@ -292,8 +276,13 @@ class Game:
     def finish_game(self):
         decision = input("Would you like to play one more time: Y/N")
         if decision.lower() == "y":
+            self._close = True
             return True
         else:
+            return False
+
+    def print_results(self):
+        if self._close:
             print("Thank you for playing with us")
             print(f' number of wins of player: %s' % self._total_wins_player,
                   f'\n number of wins of dealer: %s' % self._total_wins_dealer,
@@ -302,15 +291,12 @@ class Game:
                 print("Player defeated the dealer")
             else:
                 print("Dealer defeated the player")
-            return False
-
-    def print_results(self):
-        print(f'Point of Player is: %s ' % self._point_of_player)
-        print(f'Point of Dealer is: %s' % self._point_of_dealer)
+        else:
+            print(f'Point of Player is: %s ' % self._point_of_player)
+            print(f'Point of Dealer is: %s' % self._point_of_dealer)
 
     def stand(self):
-        decision = input("For Stand Press 'S'..."
-                         "or to continue press any key")
+        decision = input("For Stand Press 'S'...or to continue press any key")
         if decision.lower() == "s":
             self._hand = True
             return True
@@ -319,8 +305,8 @@ class Game:
 
     def finish_set(self):
         self.print_results()
-        if self.black_jack_control(decks1):
-            if self.sum_of_cards_values()[1] < 21:
+        if self.black_jack_control() and not self._black:
+            if self.card_values_total()[1] < 21:
                 print("*************************************")
                 print("Congratulations! You got a Blackjack!\n")
                 print("*************************************")
@@ -359,6 +345,18 @@ class Game:
                 print("NO WINNER! TIE")
                 self._total_ties += 1
 
+        self._point_of_dealer = 0
+        self._point_of_player = 0
+        self._cards_of_player = []
+        self._cards_of_dealer = []
+        self._hand = False
+        self._black = False
+        self._close = False
+
+#if __name__ == "__main__":
+#    g = Game()
+#    g.play()
+
 
 game1 = Game()
 decks1 = DeckOfCards()
@@ -366,14 +364,24 @@ cards1 = Card()
 
 print("Welcome To BlackJack")
 while True:
-    game1.black_jack_control(decks1)
-    game1.sum_of_cards_values(cards1)
-    game1.show_players_cards()
-    game1.dealer_cards()
-    game1.stand()
-    while game1.status(decks1):
-        game1.status(decks1)
-    game1.finish_game()
+    game1.first_distribution(decks1, cards1)
+    if game1.black_jack_control():
+        game1.finish_set()
+        if game1.finish_game():
+            game1.print_results()
+            break
+        else:
+            continue
+    else:
+        game1.show_players_cards()
+        game1.show_dealer_cards()
+        while game1.status(decks1, cards1):
+            continue
+        if game1.finish_game():
+            game1.print_results()
+            break
+        else:
+            continue
 
 
 
