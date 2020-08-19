@@ -1,7 +1,5 @@
 import random
 
-print("Welcome to the BlackJack")
-
 """Rules of the game
 1 -Blackjack oyununda amaç 21`i geçmeden krupiyeden daha yüksek bir skoru elde etmektir.
 2- Papaz kız, vale kartlarının sayılasal değeri 10`dur.
@@ -67,7 +65,6 @@ Class Game
 
 """Card class that represents a playing card and its image file name."""
 
-import secrets
 
 """
     def card_giving(self): #gives cards
@@ -121,24 +118,14 @@ import secrets
 
 class Card:
     # constant variables her zaman büyük yazılır.
-    FACES = ['Ace', '2', '3', '4', '5', '6',
-             '7', '8', '9', '10', 'Jack', 'Queen', 'King']
+    FACES = ['Ace', 2, 3, 4, 5, 6,
+             7, 8, 9, 10, 'Jack', 'Queen', 'King']
     SUITS = ['Hearts', 'Diamonds', 'Clubs', 'Spades']
     Ace = [1, 11]
     Values = {'Ace': Ace, 'Jack': 10, 'Queen': 10, 'King': 10}
 
     def __init__(self):
         """Initialize a Card with a face and suit."""
-
-    @property
-    def face(self):
-        """Return the Card's self._face value."""
-        return self._face
-
-    @property
-    def suit(self):
-        """Return the Card's self._suit value."""
-        return self._suit
 
     def __repr__(self):
         # _repr object direk çağrıldığında çağrıldığında çağrılır.
@@ -171,8 +158,9 @@ class DeckOfCards:
         while True:
             random_face = random.choice(Card.FACES)
             random_suit = random.choice(Card.SUITS)
-            if [random_face, random_suit] not in self._deck:
-                self._deck = self._deck.extend([random_face, random_suit])
+            kart = (random_face, random_suit)
+            if kart not in self._deck:
+                self._deck.append(kart)
                 break
             else:
                 continue
@@ -182,6 +170,7 @@ class DeckOfCards:
 class Game:
     def __init__(self):
         """initialize a game class to play the game according to the rules"""
+
         self._point_of_dealer = 0
         self._point_of_player = 0
         self._cards_of_player = []
@@ -204,21 +193,21 @@ class Game:
         # sum_of_card_values = DeckOfCards.card_distribute()[1]
         # one_of_dealer_value = sum_of_card_values[3]
         if not self._hand:
-            print(f'the card of dealer is {self._cards_of_dealer[-1]}')
+            print(f'the card of dealer is {self._cards_of_dealer[1]}')
         else:
             print(f'total value of dealer is {self._point_of_dealer},'
                   f'the cards of dealer is {self._cards_of_dealer}')
 
-    def sum_of_cards_values(self):
+    def sum_of_cards_values(self, ard):
         for name, suit in self._cards_of_player:
             if type(name) != int:
                 if name != 'Ace':
-                    name = Card.Values[name]
+                    name = ard.Values[name]
                 elif name == 'Ace':
                     if self._point_of_player <= 10:
-                        name = Card.Values[name[1]]
+                        name = ard.Values[name[1]]
                     else:
-                        name = Card.Values[name[0]]
+                        name = ard.Values[name[0]]
                 self._point_of_player += name
             else:
                 self._point_of_player += name
@@ -226,12 +215,12 @@ class Game:
         for name, suit in self._cards_of_dealer:
             if type(name) != int:
                 if name != 'Ace':
-                    name = Card.Values[name]
+                    name = ard.Values[name]
                 elif name == 'Ace':
                     if self._point_of_dealer <= 10:
-                        name = Card.Values[name[1]]
+                        name = ard.Values[name[1]]
                     else:
-                        name = Card.Values[name[0]]
+                        name = ard.Values[name[0]]
                 self._point_of_dealer += name
             else:
                 self._point_of_dealer += name
@@ -239,43 +228,41 @@ class Game:
         self._points = [self._point_of_player, self._point_of_dealer]
         return self._points
 
-    def black_jack_control(self):
-        i = 0
-        while i < 2:
-            self._cards_of_player = self._cards_of_player.append(DeckOfCards().card_distribute())
-            self._cards_of_dealer = self._cards_of_dealer.append(DeckOfCards().card_distribute())
-            i += 1
+    def black_jack_control(self, decks):
 
-        if Game.sum_of_cards_values()[0] == 21:
+        for i in range(2):
+            self._cards_of_player.append(decks.card_distribute())
+            self._cards_of_dealer.append(decks.card_distribute())
+        if self.sum_of_cards_values(cards1)[0] == 21:
             return True
         else:
             return False
 
 # ######################## Taner
-    def status(self):
+    def status(self, decks):
         # if player not choose STAND, take one more Card..
-        if not Game.stand():
-            self._cards_of_player = self._cards_of_player.append(DeckOfCards.card_distribute())
+        if not self.stand():
+            self._cards_of_player.append(decks.card_distribute())
         # if player is STAND, take one more Card to dealer..
         else:
             if self._point_of_dealer < self._point_of_player and self._point_of_dealer < 17:
-                self._cards_of_dealer = self._cards_of_dealer.append(DeckOfCards.card_distribute())
+                self._cards_of_dealer.append(decks.card_distribute())
 
             else:
-                Game.finish_set()
+                self.finish_set()
                 return False
                 # if players point is 21, the turn goes to dealer.
         if self._point_of_player == 21 and self._point_of_dealer == 21:
-            Game.finish_set()
+            self.finish_set()
             return False
 
         # if players point is over 21, then finish game.
         elif self._point_of_player > 21:
-            Game.finish_set()
+            self.finish_set()
             return False
         else:
             if not self._hand:
-                Game.stand()
+                self.stand()
 # ######################## Taner
 
     def __repr__(self):
@@ -286,19 +273,18 @@ class Game:
         """Return string representation for str()."""
         return f'{self._point_of_player} of {self._point_of_dealer}'
 
-    @staticmethod
-    def start_game():
+    def start_game(self):
 
         print("Welcome To BlackJack")
         while True:
-            Game().black_jack_control()
-            Game().sum_of_cards_values()
-            Game().show_players_cards()
-            Game().dealer_cards()
-            Game().stand()
-            while Game().status():
-                Game().status()
-            Game().finish_game()
+            self.black_jack_control()
+            self.sum_of_cards_values()
+            self.show_players_cards()
+            self.dealer_cards()
+            self.stand()
+            while self.status():
+                self.status()
+            self.finish_game()
 
         # print(f'Cards of Player: %s ' % self._cards_of_player,
         #      f'\n Cards of Dealer: %s ' % self._cards_of_dealer)
@@ -332,9 +318,9 @@ class Game:
             return False
 
     def finish_set(self):
-        Game.print_results()
-        if Game.black_jack_control():
-            if Game.sum_of_cards_values()[1] < 21:
+        self.print_results()
+        if self.black_jack_control(decks1):
+            if self.sum_of_cards_values()[1] < 21:
                 print("*************************************")
                 print("Congratulations! You got a Blackjack!\n")
                 print("*************************************")
@@ -375,7 +361,19 @@ class Game:
 
 
 game1 = Game()
-game1.start_game()
+decks1 = DeckOfCards()
+cards1 = Card()
+
+print("Welcome To BlackJack")
+while True:
+    game1.black_jack_control(decks1)
+    game1.sum_of_cards_values(cards1)
+    game1.show_players_cards()
+    game1.dealer_cards()
+    game1.stand()
+    while game1.status(decks1):
+        game1.status(decks1)
+    game1.finish_game()
 
 
 
