@@ -50,36 +50,36 @@ class Game:
 
     def show_players_cards(self):
 
-        print(f'the total value of player is {self._point_of_player}, '
-              f'the cards of player are {self._cards_of_player}')
+        print(f'\nthe total value of player is:  {self._point_of_player}, '
+              f'\nthe cards of player are:  {self._cards_of_player}')
 
     def show_dealer_cards(self):
 
         if not self._hand:
-            print(f'the first card of dealer is {self._cards_of_dealer[0]}')
+            print(f'\nthe first card of dealer is:  {self._cards_of_dealer[0]}')
         else:
-            print(f'total value of dealer is {self._point_of_dealer},'
-                  f'the cards of dealer are {self._cards_of_dealer}')
+            print(f'\ntotal value of dealer is:  {self._point_of_dealer},'
+                  f'\nthe cards of dealer are:  {self._cards_of_dealer}')
 
     def sum_of_cards_values(self, ard):
         self._point_of_player = 0
         self._point_of_dealer = 0
         for name, suit in self._cards_of_player:
             if type(name) != int:
-                name = ard.Values[name]
-                self._point_of_player += name
+                value = ard.Values[name]
+                self._point_of_player += value
                 # We are evaluating the value and then set Ace as 1
-                if name == "Ace" and self._point_of_player > 21:
+                if name == 'Ace' and self._point_of_player > 21:
                     self._point_of_player -= 10
             else:
                 self._point_of_player += name
 
         for name, suit in self._cards_of_dealer:
             if type(name) != int:
-                name = ard.Values[name]
-                self._point_of_dealer += name
-                if name == "Ace" and self._point_of_player > 21:
-                    self._point_of_player -= 10
+                value = ard.Values[name]
+                self._point_of_dealer += value
+                if name == 'Ace' and self._point_of_dealer > 21:
+                    self._point_of_dealer -= 10
             else:
                 self._point_of_dealer += name
         self._points = [self._point_of_player, self._point_of_dealer]
@@ -203,12 +203,12 @@ class Game:
                   f'\n number of ties are: %s' % self._total_ties)
             print("\n******************************************\n")
             if self._total_wins_player > self._total_wins_dealer:
-                print("Player defeated the dealer")
+                print("\nPlayer defeated the dealer")
             else:
-                print("Dealer defeated the player")
+                print("\nDealer defeated the player")
         else:
-            print(f'Point of Player is: %s ' % self._point_of_player)
-            print(f'Point of Dealer is: %s' % self._point_of_dealer)
+            print(f'\nPoint of Player is: %s ' % self._point_of_player)
+            print(f'Point of Dealer is: %s\n' % self._point_of_dealer)
 
     def stand(self):
         decision = input("For Stand Press 'S'...or to continue press any key")
@@ -282,27 +282,5 @@ class Game:
 if __name__ == "__main__":
     g = Game()
     g.start_game(Game, DeckOfCards, Card)
-
-"""
-game1 = Game()
-decks1 = DeckOfCards()
-cards1 = Card()
-print("Welcome To BlackJack")
-while True:
-    game1.first_distribution(decks1, cards1)
-    if game1.black_jack_control():
-        game1.finish_set(decks1)
-        if game1.finish_game():
-            game1.print_results()
-            break
-    else:
-        game1.show_players_cards()
-        game1.show_dealer_cards()
-        while game1.status(decks1, cards1):
-            pass
-        if game1.finish_game():
-            game1.print_results()
-            break
-"""
 
 
