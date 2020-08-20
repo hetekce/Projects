@@ -216,6 +216,8 @@ class Game:
             self.sum_of_cards_values(ard)
             self.show_players_cards()
             self.show_dealer_cards()
+            if self._point_of_player <= 20:
+                return True
         # if player is STAND, take one more Card to dealer..
         else:
             if self._point_of_dealer < self._point_of_player and self._point_of_dealer < 17:
@@ -223,6 +225,7 @@ class Game:
                 self.sum_of_cards_values(ard)
                 self.show_players_cards()
                 self.show_dealer_cards()
+                return True
             else:
                 self.finish_set()
                 return False
@@ -244,6 +247,12 @@ class Game:
             self.finish_set()
             return False
 
+        elif self._point_of_dealer == self._point_of_player and self._hand:
+            self.finish_set()
+            return False
+
+        else:
+            return False
         # else:
         #    if self._hand:
         #        return False
@@ -276,17 +285,19 @@ class Game:
     def finish_game(self):
         decision = input("Would you like to play one more time: Y/N")
         if decision.lower() == "y":
+            return False
+        else:
             self._close = True
             return True
-        else:
-            return False
 
     def print_results(self):
         if self._close:
-            print("Thank you for playing with us")
+            print("\n******************************************")
+            print("\nThank you for playing with us\n")
             print(f' number of wins of player: %s' % self._total_wins_player,
                   f'\n number of wins of dealer: %s' % self._total_wins_dealer,
                   f'\n number of ties are: %s' % self._total_ties)
+            print("\n******************************************\n")
             if self._total_wins_player > self._total_wins_dealer:
                 print("Player defeated the dealer")
             else:
@@ -344,6 +355,15 @@ class Game:
             else:
                 print("NO WINNER! TIE")
                 self._total_ties += 1
+        elif self._point_of_player < self._point_of_dealer:
+            print("Sorry. Your score isn't higher than the dealer. You lose.\n")
+            self._total_wins_dealer += 1
+        elif self._point_of_player > self._point_of_dealer:
+            print("Congratulations. Your score is higher than the dealer. You win\n")
+            self._total_wins_player += 1
+        elif self._point_of_player == self._point_of_dealer:
+            print("NO WINNER! TIE")
+            self._total_ties += 1
 
         self._point_of_dealer = 0
         self._point_of_player = 0
@@ -361,7 +381,6 @@ class Game:
 game1 = Game()
 decks1 = DeckOfCards()
 cards1 = Card()
-
 print("Welcome To BlackJack")
 while True:
     game1.first_distribution(decks1, cards1)
@@ -370,18 +389,14 @@ while True:
         if game1.finish_game():
             game1.print_results()
             break
-        else:
-            continue
     else:
         game1.show_players_cards()
         game1.show_dealer_cards()
         while game1.status(decks1, cards1):
-            continue
+            pass
         if game1.finish_game():
             game1.print_results()
             break
-        else:
-            continue
 
 
 
