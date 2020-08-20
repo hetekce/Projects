@@ -211,13 +211,14 @@ class Game:
 # ######################## Taner
     def status(self, decks, ard):
         # if player not choose STAND, take one more Card..
-        if not self.stand() and not self._hand:
-            self._cards_of_player.append(decks.card_distribute(ard))
-            self.sum_of_cards_values(ard)
-            self.show_players_cards()
-            self.show_dealer_cards()
-            if self._point_of_player <= 20:
-                return True
+        if not self._hand:
+            if not self.stand():
+                self._cards_of_player.append(decks.card_distribute(ard))
+                self.sum_of_cards_values(ard)
+                self.show_players_cards()
+                self.show_dealer_cards()
+                if self._point_of_player <= 20:
+                    return True
         # if player is STAND, take one more Card to dealer..
         else:
             if self._point_of_dealer < self._point_of_player and self._point_of_dealer < 17:
@@ -243,16 +244,19 @@ class Game:
             self.finish_set()
             return False
 
-        elif self._point_of_dealer > self._point_of_player:
-            self.finish_set()
-            return False
-
-        elif self._point_of_dealer == self._point_of_player and self._hand:
+        elif self._point_of_dealer > self._point_of_player and self._hand:
             self.finish_set()
             return False
 
         else:
+            self.finish_set()
             return False
+        #elif self._point_of_dealer == self._point_of_player and self._hand:
+        #   self.finish_set()
+        #   return False
+        # else:
+        #   return False
+
         # else:
         #    if self._hand:
         #        return False
