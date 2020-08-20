@@ -172,19 +172,20 @@ class Game:
             if type(name) != int:
                 name = ard.Values[name]
                 self._point_of_player += name
+                # We are evaluating the value and then set Ace as 1
+                if name == "Ace" and self._point_of_player > 21:
+                    self._point_of_player -= 10
             else:
                 self._point_of_player += name
-            # We are evaluating the value and then set Ace as 1
-            if name == "Ace" and self._point_of_player > 21:
-                self._point_of_player -= 10
+
         for name, suit in self._cards_of_dealer:
             if type(name) != int:
                 name = ard.Values[name]
                 self._point_of_dealer += name
+                if name == "Ace" and self._point_of_player > 21:
+                    self._point_of_player -= 10
             else:
                 self._point_of_dealer += name
-            if name == "Ace" and self._point_of_player > 21:
-                self._point_of_player -= 10
         self._points = [self._point_of_player, self._point_of_dealer]
         # return self._points
 
@@ -219,40 +220,42 @@ class Game:
                 self.show_dealer_cards()
                 if self._point_of_player <= 20:
                     return True
+            else:
+                return True
         # if player is STAND, take one more Card to dealer..
         else:
-            if self._point_of_dealer < self._point_of_player and self._point_of_dealer < 17:
+            if self._point_of_dealer <= self._point_of_player and self._point_of_dealer < 17:
                 self._cards_of_dealer.append(decks.card_distribute(ard))
                 self.sum_of_cards_values(ard)
                 self.show_players_cards()
                 self.show_dealer_cards()
                 return True
             else:
-                self.finish_set()
+                self.finish_set(decks)
                 return False
                 # if players point is 21, the turn goes to dealer.
         if self._point_of_player == 21 and self._point_of_dealer == 21:
-            self.finish_set()
+            self.finish_set(decks)
             return False
 
         # if players point is over 21, then finish game.
         elif self._point_of_player > 21:
-            self.finish_set()
+            self.finish_set(decks)
             return False
 
         elif self._point_of_dealer > 21:
-            self.finish_set()
+            self.finish_set(decks)
             return False
 
         elif self._point_of_dealer > self._point_of_player and self._hand:
-            self.finish_set()
+            self.finish_set(decks)
             return False
 
         else:
-            self.finish_set()
+            self.finish_set(decks)
             return False
         #elif self._point_of_dealer == self._point_of_player and self._hand:
-        #   self.finish_set()
+        #   self.finish_set(decks)
         #   return False
         # else:
         #   return False
@@ -318,7 +321,7 @@ class Game:
         else:
             return False
 
-    def finish_set(self):
+    def finish_set(self, deck):
         self.print_results()
         if self.black_jack_control() and not self._black:
             if self.card_values_total()[1] < 21:
@@ -376,6 +379,7 @@ class Game:
         self._hand = False
         self._black = False
         self._close = False
+        deck._self = []
 
 #if __name__ == "__main__":
 #    g = Game()
@@ -389,7 +393,7 @@ print("Welcome To BlackJack")
 while True:
     game1.first_distribution(decks1, cards1)
     if game1.black_jack_control():
-        game1.finish_set()
+        game1.finish_set(decks1)
         if game1.finish_game():
             game1.print_results()
             break
