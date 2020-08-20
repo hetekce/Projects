@@ -160,18 +160,28 @@ class Game:
         """Return string representation for str()."""
         return f'{self._point_of_player} of {self._point_of_dealer}'
 
-    def start_game(self):
+    @staticmethod
+    def start_game(game, deck, ard):
 
+        game1 = game()
+        decks1 = deck()
+        cards1 = ard()
         print("Welcome To BlackJack")
         while True:
-            self.black_jack_control()
-            self.sum_of_cards_values()
-            self.show_players_cards()
-            self.show_dealer_cards()
-            self.stand()
-            while self.status():
-                self.status()
-            self.finish_game()
+            game1.first_distribution(decks1, cards1)
+            if game1.black_jack_control():
+                game1.finish_set(decks1)
+                if game1.finish_game():
+                    game1.print_results()
+                    break
+            else:
+                game1.show_players_cards()
+                game1.show_dealer_cards()
+                while game1.status(decks1, cards1):
+                    pass
+                if game1.finish_game():
+                    game1.print_results()
+                    break
 
         # print(f'Cards of Player: %s ' % self._cards_of_player,
         #      f'\n Cards of Dealer: %s ' % self._cards_of_dealer)
@@ -268,11 +278,12 @@ class Game:
         self._close = False
         deck._deck = []
 
-# if __name__ == "__main__":
-#    g = Game()
-#    g.play()
 
+if __name__ == "__main__":
+    g = Game()
+    g.start_game(Game, DeckOfCards, Card)
 
+"""
 game1 = Game()
 decks1 = DeckOfCards()
 cards1 = Card()
@@ -292,6 +303,6 @@ while True:
         if game1.finish_game():
             game1.print_results()
             break
-
+"""
 
 
